@@ -71,6 +71,16 @@ func (f *Formatter) writeText(entry map[string]any) error {
 	return err
 }
 
+// WriteAll renders multiple log entries in sequence, stopping on the first error.
+func (f *Formatter) WriteAll(entries []map[string]any) error {
+	for _, entry := range entries {
+		if err := f.Write(entry); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func sortedKeys(m map[string]any) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
