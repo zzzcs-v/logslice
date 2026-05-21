@@ -17,6 +17,19 @@ func tokens(input string) []Token {
 	return result
 }
 
+// assertTokenTypes checks that the token types match the expected sequence.
+func assertTokenTypes(t *testing.T, toks []Token, expected []TokenType) {
+	t.Helper()
+	if len(toks) != len(expected) {
+		t.Fatalf("expected %d tokens, got %d: %+v", len(expected), len(toks), toks)
+	}
+	for i, tt := range expected {
+		if toks[i].Type != tt {
+			t.Errorf("token[%d]: expected type %d, got %d (literal=%q)", i, tt, toks[i].Type, toks[i].Literal)
+		}
+	}
+}
+
 func TestLexerEmpty(t *testing.T) {
 	toks := tokens("")
 	if len(toks) != 1 || toks[0].Type != TOKEN_EOF {
@@ -27,14 +40,7 @@ func TestLexerEmpty(t *testing.T) {
 func TestLexerEqOperator(t *testing.T) {
 	toks := tokens("level == \"error\"")
 	expected := []TokenType{TOKEN_IDENT, TOKEN_EQ, TOKEN_STRING, TOKEN_EOF}
-	if len(toks) != len(expected) {
-		t.Fatalf("expected %d tokens, got %d: %+v", len(expected), len(toks), toks)
-	}
-	for i, tt := range expected {
-		if toks[i].Type != tt {
-			t.Errorf("token[%d]: expected type %d, got %d (literal=%q)", i, tt, toks[i].Type, toks[i].Literal)
-		}
-	}
+	assertTokenTypes(t, toks, expected)
 	if toks[0].Literal != "level" {
 		t.Errorf("expected ident 'level', got %q", toks[0].Literal)
 	}
@@ -46,11 +52,7 @@ func TestLexerEqOperator(t *testing.T) {
 func TestLexerNeqOperator(t *testing.T) {
 	toks := tokens("status != 200")
 	expected := []TokenType{TOKEN_IDENT, TOKEN_NEQ, TOKEN_NUMBER, TOKEN_EOF}
-	for i, tt := range expected {
-		if toks[i].Type != tt {
-			t.Errorf("token[%d]: expected type %d, got %d", i, tt, toks[i].Type)
-		}
-	}
+	assertTokenTypes(t, toks, expected)
 	if toks[2].Literal != "200" {
 		t.Errorf("expected number '200', got %q", toks[2].Literal)
 	}
@@ -66,14 +68,7 @@ func TestLexerAndOrKeywords(t *testing.T) {
 		TOKEN_IDENT, TOKEN_EQ, TOKEN_STRING,
 		TOKEN_EOF,
 	}
-	if len(toks) != len(expected) {
-		t.Fatalf("expected %d tokens, got %d: %+v", len(expected), len(toks), toks)
-	}
-	for i, tt := range expected {
-		if toks[i].Type != tt {
-			t.Errorf("token[%d]: expected type %d, got %d (literal=%q)", i, tt, toks[i].Type, toks[i].Literal)
-		}
-	}
+	assertTokenTypes(t, toks, expected)
 }
 
 func TestLexerParens(t *testing.T) {
