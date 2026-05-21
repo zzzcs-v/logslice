@@ -77,6 +77,13 @@ func TestParseEmptyField(t *testing.T) {
 	}
 }
 
+func TestParseEmptyValue(t *testing.T) {
+	_, err := Parse("level=")
+	if err == nil {
+		t.Fatal("expected error for empty value, got nil")
+	}
+}
+
 func assertFilter(t *testing.T, f Filter, field string, op Op, value string) {
 	t.Helper()
 	if f.Field != field {
