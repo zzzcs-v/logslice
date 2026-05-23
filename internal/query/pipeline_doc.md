@@ -26,6 +26,18 @@ if err != nil {
 // pass f to filter.Match or filter.StreamFilter
 ```
 
+## Error Handling
+
+Errors returned by `Pipeline` are typed and can be inspected for more detail:
+
+- `*query.ParseError` – the input could not be tokenised or parsed. The `Pos`
+  field indicates the byte offset in the input string where parsing failed.
+- `*query.ValidationError` – the AST was built successfully but failed semantic
+  checks. The `Field` field names the offending field or operator.
+
+Callers that want to surface a user-friendly message can use `errors.As` to
+unwrap these types and extract context before formatting the error.
+
 ## Empty Input
 
 Passing an empty string returns `(nil, nil)`. A `nil` filter passed to
