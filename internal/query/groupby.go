@@ -25,10 +25,10 @@ func GroupBy(entries []json.RawMessage, field string) []GroupResult {
 	for _, raw := range entries {
 		var obj map[string]interface{}
 		if err := json.Unmarshal(raw, &obj); err != nil {
-			index[""] = append(index[""], raw)
-			if len(index[""])==1 {
+			if _, exists := index[""]; !exists {
 				order = append(order, "")
 			}
+			index[""] = append(index[""], raw)
 			continue
 		}
 
