@@ -78,3 +78,21 @@ func TestPaginatorOffsetAndLimit(t *testing.T) {
 		t.Fatalf("expected taken=3, got %d", p.Taken())
 	}
 }
+
+// TestPaginatorDoneStopsEmitting verifies that once the paginator is done,
+// all subsequent Accept calls return emit=false and done=true.
+func TestPaginatorDoneStopsEmitting(t *testing.T) {
+	p := NewPaginator(PageOptions{Offset: 0, Limit: 1})
+
+	emit, done := p.Accept()
+	if !emit || done {
+		t.Fatal("first entry: expected emit=true done=false")
+	}
+
+	for i := 0; i < 5; i++ {
+		emit, done = p.Accept()
+		if emit || !done {
+			t.Fatalf("call %d after limit: expected emit=false done=true", i+2)
+		}
+	}
+}
